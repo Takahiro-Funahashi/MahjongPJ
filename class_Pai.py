@@ -249,29 +249,30 @@ class class_Pai (object):
         self.InTextFrame.pack()
 
         self.btnClear = tk.Button(
-            self.InFrame, text='Reset', command=self.canvas_reset)
-        self.btnClear.pack(side=tk.LEFT)
+            self.InFrame, text='Reset', image = self.buttom_img_Rest,command=self.canvas_reset)
         self.btnRandom = tk.Button(
-            self.InFrame, text='Random', command=self.set_random)
-        self.btnRandom.pack(side=tk.LEFT)
+            self.InFrame, text='Random', image = self.buttom_img_Auto, command=self.set_random)
         self.btnChey = tk.Button(
-            self.InFrame, text='チー', command=self.chey)
-        self.btnChey.pack(side=tk.LEFT)
+            self.InFrame, text='チー', image = self.buttom_img_Chey, command=self.chey)
         self.btnPon = tk.Button(
-            self.InFrame, text='ポン', command=self.pon)
-        self.btnPon.pack(side=tk.LEFT)
-        self.btnKan = tk.Button(
-            self.InFrame, text='明カン', command=self.minkan)
-        self.btnKan.pack(side=tk.LEFT)
-        self.btnKan = tk.Button(
-            self.InFrame, text='暗カン', command=self.ankan)
-        self.btnKan.pack(side=tk.LEFT)
+            self.InFrame, text='ポン', image = self.buttom_img_Pon, command=self.pon)
+        self.btnMinKan = tk.Button(
+            self.InFrame, text='明カン', image = self.buttom_img_MinKan, command=self.minkan)
+        self.btnAnKan = tk.Button(
+            self.InFrame, text='暗カン', image = self.buttom_img_AnKan, command=self.ankan)
         self.btnTsumo = tk.Button(
-            self.InFrame, text='ツモ', command=self.tsumo)
-        self.btnTsumo.pack(side=tk.LEFT)
+            self.InFrame, text='ツモ', image = self.buttom_img_Tsumo, command=self.tsumo)
         self.btnRon = tk.Button(
-            self.InFrame, text='ロン', command=self.ron)
-        self.btnRon.pack(side=tk.LEFT)
+            self.InFrame, text='ロン', image = self.buttom_img_Ron, command=self.ron)
+        
+        self.btnClear.grid(row=0, column=1)
+        self.btnRandom.grid(row=0, column=2)
+        self.btnChey.grid(row=2, column=1)
+        self.btnPon.grid(row=2, column=2)
+        self.btnMinKan.grid(row=2, column=3)
+        self.btnAnKan.grid(row=2, column=4)
+        self.btnTsumo.grid(row=3, column=1)
+        self.btnRon.grid(row=3, column=2)
 
         self.renew_feild()
 
@@ -315,29 +316,62 @@ class class_Pai (object):
         # Video/Audioボタン部品
 
         from PIL import Image, ImageTk, ImageDraw, ImageFont
+        import sys
 
         btn_size = (120, 28)
         rect = (int(btn_size[Y]/2), 0,
                 int(btn_size[X]-btn_size[Y]/2), btn_size[Y]-1)
 
         font_size = 16
-        font_obj = ImageFont.truetype("YuGothB.ttc", font_size)
-        btn_text = 'RANDOM  '
+        platform =  sys.platform
+        if platform == 'linux':
+            font_obj = ImageFont.truetype("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc", font_size)
+        elif platform == 'win32':
+            font_obj = ImageFont.truetype("YuGothB.ttc", font_size)
+        font_size = font_size*2
 
-        text = (int(btn_size[X]/2-(len(btn_text)/2*font_size/2)),
-                int((btn_size[Y]-font_size)/2))
+        def create_btn_img(btn_text):
+            if platform == 'linux':
+                text = (int(btn_size[X]/2-(len(btn_text)/2*font_size/2)),0)
+            elif platform == 'win32':
+                text = (int(btn_size[X]/2-(len(btn_text)/2*font_size/2)),
+                    int((btn_size[Y]-font_size)/2))
+        
+            buttom_img = Image.new(
+                'RGBA', btn_size, (0, 0, 0, 0))
+            draw_buttom_img = ImageDraw.ImageDraw(
+                buttom_img)
+            draw_buttom_img.rectangle(
+                rect, fill=dark_color)
+            draw_buttom_img.text(
+                text, btn_text, fill=white_color, font=font_obj, anchor='CENTER')
 
-        video_button_select_on_obj_img = Image.new(
-            'RGBA', btn_size, (0, 0, 0, 0))
-        draw_video_button_select_on_obj_img = ImageDraw.ImageDraw(
-            video_button_select_on_obj_img)
-        draw_video_button_select_on_obj_img.rectangle(
-            rect, fill=dark_color)
-        draw_video_button_select_on_obj_img.text(
-            text, btn_text, fill=white_color, font=font_obj, anchor='CENTER')
+            return ImageTk.PhotoImage(buttom_img)
 
-        self.video_button_select_on_obj_img = ImageTk.PhotoImage(
-            video_button_select_on_obj_img)
+        btn_text = 'リセット'
+        self.buttom_img_Rest = create_btn_img(btn_text)
+
+        btn_text = '自動'
+        self.buttom_img_Auto = create_btn_img(btn_text)
+
+        btn_text = 'ポン'
+        self.buttom_img_Pon = create_btn_img(btn_text)
+
+        btn_text = 'チー'
+        self.buttom_img_Chey = create_btn_img(btn_text)
+
+        btn_text = '明槓'
+        self.buttom_img_MinKan = create_btn_img(btn_text)
+
+        btn_text = '暗槓'
+        self.buttom_img_AnKan = create_btn_img(btn_text)
+
+        btn_text = 'ツモ'
+        self.buttom_img_Tsumo = create_btn_img(btn_text)
+
+        btn_text = 'ロン'
+        self.buttom_img_Ron = create_btn_img(btn_text)
+        
         return
 
     def renew_feild(self):
