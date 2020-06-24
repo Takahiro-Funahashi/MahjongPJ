@@ -53,6 +53,7 @@ class class_Pai (object):
         return
 
     def _image_pai_(self):
+        import os
         from PIL import Image, ImageTk, ImageDraw
 
         self.HEAD_N_DEF = [
@@ -65,12 +66,12 @@ class class_Pai (object):
         _aka_ = '-aka5'
         _e_ = '.gif'
 
-        _image_path_ = ".\\image\\"
+        _image_path_ = os.path.abspath("image")
 
         self.PAI_IMG = dict()
         self.PAI_ROTATE_IMG = dict()
 
-        f_path = _image_path_ + _ura_ + _e_
+        f_path = os.path.join(_image_path_, _ura_ + _e_)
         _img_obj_ = Image.open(f_path).resize((30, 40))
         _img_ = ImageTk.PhotoImage(_img_obj_)
         self.PAI_IMG_URA = _img_
@@ -82,7 +83,7 @@ class class_Pai (object):
                     _num_ = str(j+1) + TSUU_N_DEF[j]
                 else:
                     _num_ = str(j+1)
-                f_path = _image_path_ + _header_ + _num_ + _e_
+                f_path = os.path.join(_image_path_, _header_ + _num_ + _e_)
                 _img_obj_ = Image.open(f_path).resize((30, 40))
                 _img_ = ImageTk.PhotoImage(_img_obj_)
                 self.PAI_IMG.setdefault(hai, _img_)
@@ -92,7 +93,8 @@ class class_Pai (object):
         else:
             aka5 = [115, 125, 135]
             for i, key in enumerate(aka5):
-                f_path = _image_path_ + self.HEAD_N_DEF[i] + _aka_ + _e_
+                f_path = os.path.join(
+                    _image_path_, self.HEAD_N_DEF[i] + _aka_ + _e_)
                 _img_obj_ = Image.open(f_path).resize((30, 40))
                 _img_ = ImageTk.PhotoImage(_img_obj_)
                 self.PAI_IMG.setdefault(key, _img_)
