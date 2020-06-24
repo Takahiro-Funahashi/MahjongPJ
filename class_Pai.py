@@ -175,10 +175,10 @@ class class_Pai (object):
 
         return disp_list
 
-    def _Debug_View_1(self, haipai_list):
+    def HaipaiTestViewer(self, haipai_list):
         import tkinter as tk
 
-        width, height = 800, 600
+        width, height = 560, 540
         _view_ = tk.Tk()
         _view_.geometry(f'{width}x{height}+300+300')
         _view_.title('麻雀')
@@ -198,10 +198,10 @@ class class_Pai (object):
 
         return
 
-    def _Debug_View_2(self):
+    def AllPaiViewer(self):
         import tkinter as tk
 
-        width, height = 800, 800
+        width, height = 310, 690
         _view_ = tk.Tk()
         _view_.geometry(f'{width}x{height}+300+300')
         _view_.title('麻雀')
@@ -222,7 +222,7 @@ class class_Pai (object):
 
         return
 
-    def _Debug_View_3(self):
+    def YakuEditor(self):
         self.select_haipai = dict()
         self.t_select = dict()
         self.haipai = list()
@@ -234,6 +234,7 @@ class class_Pai (object):
         _view_.title('麻雀 役判定エディター')
 
         self._image_pai_()
+        self.create_btn()
 
         self.canvas = tk.Canvas(
             _view_, bg='green', width=width, height=height-240)
@@ -286,6 +287,59 @@ class class_Pai (object):
 
         return
 
+    def create_btn(self):
+        dark_color = '#7F7F7F'
+        green_color = '#00B050'
+        light_green_color = '#A9D1A9'
+        yellow_color = 'yellow'
+        red_color = 'red'
+        orange_color = '#FFC000'
+        white_color = 'white'
+        black_color = 'black'
+        select_on_color = '#4472C4'
+        select_off_color = '#DAE3F3'
+        all_select_color = '#0066F0'
+        all_deselect_color = 'gainsboro'
+        canvas_bg_color = 'whitesmoke'
+        btn_color = 'royalblue'
+        btn_color = 'mediumblue'
+        edit_btn_color = 'cornflowerblue'
+        edit_btn_color = 'royalblue'
+        grern_yellow_color1 = 'lime'
+        grern_yellow_color2 = 'palegreen'
+
+        X = 0
+        Y = 1
+
+        ####################################################################################################
+        # Video/Audioボタン部品
+
+        from PIL import Image, ImageTk, ImageDraw, ImageFont
+
+        btn_size = (120, 28)
+        rect = (int(btn_size[Y]/2), 0,
+                int(btn_size[X]-btn_size[Y]/2), btn_size[Y]-1)
+
+        font_size = 16
+        font_obj = ImageFont.truetype("YuGothB.ttc", font_size)
+        btn_text = 'RANDOM  '
+
+        text = (int(btn_size[X]/2-(len(btn_text)/2*font_size/2)),
+                int((btn_size[Y]-font_size)/2))
+
+        video_button_select_on_obj_img = Image.new(
+            'RGBA', btn_size, (0, 0, 0, 0))
+        draw_video_button_select_on_obj_img = ImageDraw.ImageDraw(
+            video_button_select_on_obj_img)
+        draw_video_button_select_on_obj_img.rectangle(
+            rect, fill=dark_color)
+        draw_video_button_select_on_obj_img.text(
+            text, btn_text, fill=white_color, font=font_obj, anchor='CENTER')
+
+        self.video_button_select_on_obj_img = ImageTk.PhotoImage(
+            video_button_select_on_obj_img)
+        return
+
     def renew_feild(self):
         wlist = self.canvas.find_all()
         for i in wlist:
@@ -321,6 +375,10 @@ class class_Pai (object):
 
     def canvas_reset(self):
         self.renew_feild()
+        self.select_haipai.clear()
+        self.tehai_reset()
+
+    def tehai_reset(self):
         wlist = self.t_canvas.find_all()
         for i in wlist:
             self.t_canvas.delete(i)
@@ -458,7 +516,6 @@ class class_Pai (object):
                 canvas.dtag(self.start_tag, self.start_tag)
                 if len(self.select_haipai) > 13:
                     self.set_calc_canvas()
-                    pass
         else:
             if self.start_tag is not None:
                 sx, sy = canvas.coords(self.start_tag)
@@ -508,13 +565,7 @@ class class_Pai (object):
         return
 
     def set_calc_canvas(self):
-        wlist = self.t_canvas.find_all()
-        for i in wlist:
-            self.t_canvas.delete(i)
-        self.t_select.clear()
-        self.haipai.clear()
-        self.furo.clear()
-        self.isTsel = False
+        self.tehai_reset()
 
         temp_tehai = [v.split('_')[1:] for v in self.select_haipai.values()]
         for _hai_ in temp_tehai:
@@ -531,7 +582,7 @@ class class_Pai (object):
             self.haipai.sort()
             if 15.5 in self.haipai:
                 index = self.haipai.index(15.5)
-                self.haipai[index] = 125
+                self.haipai[index] = 115
             if 25.5 in self.haipai:
                 index = self.haipai.index(25.5)
                 self.haipai[index] = 125
@@ -580,31 +631,35 @@ class class_Pai (object):
         for f in self.furo:
             select = list()
             for k, v in f.items():
-                flen = len(k)
-                for i in range(int(flen/2)):
-                    pid = int(k[i*2:i*2+2])
+                flen = k.split('_')
+                for i in flen:
+                    pid = int(i)
                     select.append(pid)
-                offset += 32*int(flen/2) + 5
-                if v[0] != 0:
-                    offset += 10
-                for i, pai_id in enumerate(select):
-                    if i == 0 and v[0] != 0:
+                x_offset = 700-10
+                isNoRotate = False
+                if v[0] == 0:  # 暗槓
+                    isNoRotate = True
+                end = len(select)-1
+                for i, pai_id in enumerate(reversed(select)):
+                    offset += 32
+                    if i == end and not isNoRotate:
+                        offset += 10
                         y = 40
-                        x = 680-offset
+                        x = x_offset - offset
                         img = self.PAI_ROTATE_IMG[pai_id]
                     else:
-                        x = 680-offset+10+32*i
                         y = 30
+                        x = x_offset - offset
                         img = self.PAI_IMG[pai_id]
-                    if (i == 0 or i == 3) and v[0] == 0:
+                    if (i == 0 or i == 3) and isNoRotate:
                         img = self.PAI_IMG_URA
+
                     self.t_canvas.create_image(
                         x, y, image=img, anchor=tk.NW)
-            if v[0] == 0:
-                offset -= 10
+                offset += 6
         return
 
-    def chey(self):
+    def _set_pop_index_select(self, kan=False):
         pop_index = list()
         select = list()
         for key in self.t_select:
@@ -612,163 +667,88 @@ class class_Pai (object):
             select.append(a)
             pop_index.append(int(key))
         else:
+            if kan:
+                select.append(a)
             pop_index.sort()
+
+        return pop_index, select
+
+    def chey(self):
+        pop_index, select = self._set_pop_index_select()
+        temp_id = None
+        for i, s in enumerate(select):
+            if s > 100:
+                temp_id = s
+                select[i] = s-100
 
         if len(select) == 3 and len(set(select)) == 3:
             select.sort()
-            if select[2] - select[0] == 2:
+            if int(select[2]) - int(select[0]) == 2:
                 for i, p_index in enumerate(pop_index):
                     self.haipai.pop(p_index-i)
                 self.del_t_select()
 
-                key = f'{select[0]}{select[1]}{select[2]}'
+                if temp_id is not None:
+                    t = temp_id-100
+                    index = select.index(t)
+                    select[index] = temp_id
+
+                key = f'{select[0]}_{select[1]}_{select[2]}'
                 self.furo.append({key: (3, select[0])})
                 print(self.furo)
                 self.write_furo()
-                '''
-                offset = 0
-                for f in self.furo:
-                    for k, v in f.items():
-                        flen = len(k)
-                        offset += 32*int(flen/2) + 5
-                        if v[0] != 0:
-                            offset += 10
-
-                for i, pai_id in enumerate(select):
-                    if i == 0:
-                        x = 580-offset
-                        y = 40
-                        img = self.PAI_ROTATE_IMG[pai_id]
-                    else:
-                        x = 580-offset+10+32*i
-                        y = 30
-                        img = self.PAI_IMG[pai_id]
-                    self.t_canvas.create_image(
-                        x, y, image=img, anchor=tk.NW)
-                self.furo.append({key: (3, select[0])})
-                '''
 
     def pon(self):
-        pop_index = list()
-        select = list()
-        for key in self.t_select:
-            a = self.haipai[int(key)]
-            select.append(a)
-            pop_index.append(int(key))
-            pop_index.sort()
+        pop_index, select = self._set_pop_index_select()
+        temp_id = None
+        if select[-1] > 100:
+            temp_id = select[-1]-100
+            select[-1] = temp_id
 
         if len(select) == 3 and len(set(select)) == 1:
             for i, p_index in enumerate(pop_index):
                 self.haipai.pop(p_index-i)
             self.del_t_select()
-            pai_id = select[0]
-            key = f'{pai_id}{pai_id}{pai_id}'
-            self.furo.append({key: (3, pai_id)})
+
+            if temp_id is not None:
+                select[1] = temp_id+100
+            key = f'{select[0]}_{select[1]}_{select[2]}'
+            self.furo.append({key: (3, select[0])})
             self.write_furo()
-            return
-
-            offset = 0
-            for f in self.furo:
-                for k, v in f.items():
-                    flen = len(k)
-                    offset += 32*int(flen/2) + 5
-                    if v[0] != 0:
-                        offset += 10
-
-            for i, pai_id in enumerate(select):
-                if i == 0:
-                    x = 580-offset
-                    y = 40
-                    img = self.PAI_ROTATE_IMG[pai_id]
-                else:
-                    x = 580-offset+10+32*i
-                    y = 30
-                    img = self.PAI_IMG[pai_id]
-                self.t_canvas.create_image(
-                    x, y, image=img, anchor=tk.NW)
-            self.furo.append({key: (3, pai_id)})
 
     def minkan(self):
-        pop_index = list()
-        select = list()
-        for key in self.t_select:
-            a = self.haipai[int(key)]
-            select.append(a)
-            pop_index.append(int(key))
-        else:
-            select.append(a)
-            pop_index.sort()
+        pop_index, select = self._set_pop_index_select(kan=True)
+        temp_id = None
+        if select[-1] > 100:
+            temp_id = select[-1]-100
+            select[-1] = temp_id
 
         if len(select) == 4 and len(set(select)) == 1:
             for i, p_index in enumerate(pop_index):
                 self.haipai.pop(p_index-i)
             self.del_t_select()
-            pai_id = select[0]
-            key = f'{pai_id}{pai_id}{pai_id}{pai_id}'
-            self.furo.append({key: (3, pai_id)})
+            if temp_id is not None:
+                select[1] = temp_id+100
+            key = f'{select[0]}_{select[1]}_{select[2]}_{select[3]}'
+            self.furo.append({key: (3, select[0])})
             self.write_furo()
-            return
-
-            offset = 0
-            for f in self.furo:
-                for k, v in f.items():
-                    flen = len(k)
-                    offset += 32*int(flen/2) + 5
-                    if v[0] != 0:
-                        offset += 10
-
-            for i, pai_id in enumerate(select):
-                if i == 0:
-                    x = 580-32-offset
-                    y = 40
-                    img = self.PAI_ROTATE_IMG[pai_id]
-                else:
-                    x = 580-32-offset+10+32*i
-                    y = 30
-                    img = self.PAI_IMG[pai_id]
-                self.t_canvas.create_image(
-                    x, y, image=img, anchor=tk.NW)
-            self.furo.append({key: (3, pai_id)})
 
     def ankan(self):
-        pop_index = list()
-        select = list()
-        for key in self.t_select:
-            a = self.haipai[int(key)]
-            select.append(a)
-            pop_index.append(int(key))
-        else:
-            select.append(a)
-            pop_index.sort()
+        pop_index, select = self._set_pop_index_select(kan=True)
+        temp_id = None
+        if select[-1] > 100:
+            temp_id = select[-1]-100
+            select[-1] = temp_id
 
         if len(select) == 4 and len(set(select)) == 1:
             for i, p_index in enumerate(pop_index):
                 self.haipai.pop(p_index-i)
             self.del_t_select()
-            pai_id = select[0]
-            key = f'{pai_id}{pai_id}{pai_id}{pai_id}'
-            self.furo.append({key: (0, pai_id)})
+            if temp_id is not None:
+                select[1] = temp_id+100
+            key = f'{select[0]}_{select[1]}_{select[2]}_{select[3]}'
+            self.furo.append({key: (0, select[0])})
             self.write_furo()
-            return
-
-            offset = 0
-            for f in self.furo:
-                for k, v in f.items():
-                    flen = len(k)
-                    offset += 32*int(flen/2) + 5
-                    if v[0] != 0:
-                        offset += 10
-
-            for i, pai_id in enumerate(select):
-                x = 580-32-offset+10+32*i
-                y = 30
-                if i == 0 or i == 3:
-                    img = self.PAI_IMG_URA
-                else:
-                    img = self.PAI_IMG[pai_id]
-                self.t_canvas.create_image(
-                    x, y, image=img, anchor=tk.NW)
-            self.furo.append({key: (0, pai_id)})
 
     def tsumo(self):
         return
@@ -779,53 +759,59 @@ class class_Pai (object):
 
 if __name__ == '__main__':
     Pai = class_Pai()
-    '''
-    # 洗牌の確認
-    pais_list = Pai.shey_pai()
-    print(pais_list)
-    '''
-    '''
 
-    haipai_list = list()
+    def shey_pai(Pai):
+        # 洗牌の確認
+        pais_list = Pai.shey_pai()
+        print(pais_list)
 
-    for i in range(1):
-        # 牌山の生成
-        pai_yama_list = Pai.create_haiyama(num_player=4)
-        # 牌山の中身を確認
-        c_Pai_Yama_List = list()
-        for Yama in pai_yama_list:
-            Yama_list = list()
-            # print(len(Yama), Yama)
-            for P in Yama:
-                # __pai_type__, __pai_indv__ = Pai.get_pai_kind_num(pai_number=P)
-                # print(__pai_type__, __pai_indv__)
-                pai_char, pai_id = Pai.set_pai_char(pai_number=P, isAka=True)
-                # Yama_list.append(pai_char)
-                Yama_list.append(pai_id)
+    def view_haipai(Pai):
+        haipai_list = list()
+
+        for i in range(10):
+            # 牌山の生成
+            pai_yama_list = Pai.create_haiyama(num_player=4)
+            # 牌山の中身を確認
+            c_Pai_Yama_List = list()
+            for Yama in pai_yama_list:
+                Yama_list = list()
+                # print(len(Yama), Yama)
+                for P in Yama:
+                    # __pai_type__, __pai_indv__ = Pai.get_pai_kind_num(pai_number=P)
+                    # print(__pai_type__, __pai_indv__)
+                    pai_char, pai_id = Pai.set_pai_char(
+                        pai_number=P, isAka=True)
+                    # Yama_list.append(pai_char)
+                    Yama_list.append(pai_id)
+                else:
+                    c_Pai_Yama_List.append(Yama_list)
             else:
-                c_Pai_Yama_List.append(Yama_list)
-        else:
-            # print(c_Pai_Yama_List)
-            key_dict = dict()
-            for cYama in c_Pai_Yama_List:
-                for key in set(cYama):
-                    if key in key_dict:
-                        key_dict[key] += cYama.count(key)
-                    else:
-                        key_dict.setdefault(key, cYama.count(key))
-            else:
-                print(key_dict)  # 牌の個数をカウントする
-                print(len(key_dict.keys()))  # 牌種別数
-        # 仮の配牌時
-        haipai = pai_yama_list[0][0:14]
-        _haipai_list_, haipai_char_list = Pai.set_haipai_char(
-            haipai, isAka=True)
-        print(_haipai_list_)
-        print(haipai_char_list)
-        haipai_list.append(_haipai_list_)
-    '''
-    '''
-    Pai._Debug_View_1(haipai_list)
-    '''
+                # print(c_Pai_Yama_List)
+                key_dict = dict()
+                for cYama in c_Pai_Yama_List:
+                    for key in set(cYama):
+                        if key in key_dict:
+                            key_dict[key] += cYama.count(key)
+                        else:
+                            key_dict.setdefault(key, cYama.count(key))
+                else:
+                    print(key_dict)  # 牌の個数をカウントする
+                    print(len(key_dict.keys()))  # 牌種別数
+            # 仮の配牌時
+            haipai = pai_yama_list[0][0:14]
+            _haipai_list_, haipai_char_list = Pai.set_haipai_char(
+                haipai, isAka=True)
+            print(_haipai_list_)
+            print(haipai_char_list)
+            haipai_list.append(_haipai_list_)
 
-    Pai._Debug_View_3()
+        Pai.HaipaiTestViewer(haipai_list)
+
+    if 0:
+        shey_pai(Pai)
+    if 0:
+        view_haipai(Pai)
+    if 0:
+        Pai.AllPaiViewer()
+    if 1:
+        Pai.YakuEditor()
