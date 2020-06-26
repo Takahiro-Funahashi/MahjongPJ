@@ -228,51 +228,69 @@ class class_Pai (object):
         self.haipai = list()
         self.furo = list()
 
-        width, height = 700, 700
+        width, height = 700, 800
         _view_ = tk.Tk()
-        _view_.geometry(f'{width}x{height}+300+300')
+        _view_.geometry(f'{width}x{height}+200+200')
         _view_.title('麻雀 役判定エディター')
 
         self._image_pai_()
         self.create_btn()
 
         self.canvas = tk.Canvas(
-            _view_, bg='green', width=width, height=height-240)
-        self.canvas.pack()
+            _view_, bg='green', width=width-5, height=height-340)
         self.t_canvas = tk.Canvas(
-            _view_, bg='darkgreen', width=width, height=100)
-        self.t_canvas.pack()
+            _view_, bg='darkgreen', width=width-5, height=100)
 
-        self.InFrame = tk.Frame(_view_, bg='lightgray')
-        self.InFrame.pack()
-        self.InTextFrame = tk.Frame(_view_, bg='lightgray')
-        self.InTextFrame.pack()
+        self.InFrame = tk.Frame(_view_)
+        self.InkyokuFrame = tk.Frame(_view_)
+        self.InTextFrame = tk.Frame(_view_)
 
         self.btnClear = tk.Button(
             self.InFrame, text='Reset', image=self.buttom_img_Rest, command=self.canvas_reset)
         self.btnRandom = tk.Button(
             self.InFrame, text='Random', image=self.buttom_img_Auto, command=self.set_random)
         self.btnChey = tk.Button(
-            self.InFrame, text='チー', image=self.buttom_img_Chey, command=self.chey)
+            self.InFrame, text='吃', image=self.buttom_img_Chey, command=self.chey)
         self.btnPon = tk.Button(
-            self.InFrame, text='ポン', image=self.buttom_img_Pon, command=self.pon)
+            self.InFrame, text='碰', image=self.buttom_img_Pon, command=self.pon)
         self.btnMinKan = tk.Button(
-            self.InFrame, text='明カン', image=self.buttom_img_MinKan, command=self.minkan)
+            self.InFrame, text='明槓', image=self.buttom_img_MinKan, command=self.minkan)
         self.btnAnKan = tk.Button(
-            self.InFrame, text='暗カン', image=self.buttom_img_AnKan, command=self.ankan)
+            self.InFrame, text='暗槓', image=self.buttom_img_AnKan, command=self.ankan)
         self.btnTsumo = tk.Button(
-            self.InFrame, text='ツモ', image=self.buttom_img_Tsumo, command=self.tsumo)
+            self.InFrame, text='自模', image=self.buttom_img_Tsumo, command=self.tsumo)
         self.btnRon = tk.Button(
-            self.InFrame, text='ロン', image=self.buttom_img_Ron, command=self.ron)
+            self.InFrame, text='栄和', image=self.buttom_img_Ron, command=self.ron)
 
-        self.btnClear.grid(row=0, column=1)
-        self.btnRandom.grid(row=0, column=2)
-        self.btnChey.grid(row=2, column=1)
-        self.btnPon.grid(row=2, column=2)
-        self.btnMinKan.grid(row=2, column=3)
-        self.btnAnKan.grid(row=2, column=4)
-        self.btnTsumo.grid(row=3, column=1)
-        self.btnRon.grid(row=3, column=2)
+        self.spinboxBa = tk.Spinbox(self.InkyokuFrame, width=5, values=(
+            '東', '南', '西', '北')).grid(row=0, column=0, padx=10, pady=10)
+        self.labelBa = tk.Label(self.InkyokuFrame, text="場　　").grid(
+            row=0, column=1, sticky="w")
+
+        self.spinboxKyoku = tk.Spinbox(self.InkyokuFrame, width=5, values=(
+            1, 2, 3, 4)).grid(row=0, column=2, padx=10, pady=10)
+        self.labelKyoku = tk.Label(self.InkyokuFrame, text="局　　").grid(
+            row=0, column=3, sticky="w")
+
+        self.spinboxTya = tk.Spinbox(self.InkyokuFrame, width=5, values=(
+            '東', '南', '西', '北')).grid(row=0, column=4, padx=10, pady=10)
+        self.labelTya = tk.Label(self.InkyokuFrame, text="家　　").grid(
+            row=0, column=5, sticky="w")
+
+        self.canvas.grid(row=0, column=0)
+        self.t_canvas.grid(row=1, column=0)
+        self.InFrame.grid(row=3, column=0)
+        self.InkyokuFrame.grid(row=2, column=0)
+        self.InTextFrame.grid(row=4, column=0)
+
+        self.btnChey.grid(row=0, column=1)
+        self.btnPon.grid(row=0, column=2)
+        self.btnMinKan.grid(row=0, column=3)
+        self.btnAnKan.grid(row=0, column=4)
+        self.btnTsumo.grid(row=0, column=5)
+        self.btnRon.grid(row=0, column=6)
+        self.btnClear.grid(row=1, column=1)
+        self.btnRandom.grid(row=1, column=2)
 
         self.renew_feild()
 
@@ -289,26 +307,6 @@ class class_Pai (object):
         return
 
     def create_btn(self):
-        dark_color = '#7F7F7F'
-        green_color = '#00B050'
-        light_green_color = '#A9D1A9'
-        yellow_color = 'yellow'
-        red_color = 'red'
-        orange_color = '#FFC000'
-        white_color = 'white'
-        black_color = 'black'
-        select_on_color = '#4472C4'
-        select_off_color = '#DAE3F3'
-        all_select_color = '#0066F0'
-        all_deselect_color = 'gainsboro'
-        canvas_bg_color = 'whitesmoke'
-        btn_color = 'royalblue'
-        btn_color = 'mediumblue'
-        edit_btn_color = 'cornflowerblue'
-        edit_btn_color = 'royalblue'
-        grern_yellow_color1 = 'lime'
-        grern_yellow_color2 = 'palegreen'
-
         X = 0
         Y = 1
 
@@ -318,11 +316,11 @@ class class_Pai (object):
         from PIL import Image, ImageTk, ImageDraw, ImageFont
         import sys
 
-        btn_size = (120, 28)
+        btn_size = (100, 24)
         rect = (int(btn_size[Y]/2), 0,
                 int(btn_size[X]-btn_size[Y]/2), btn_size[Y]-1)
 
-        font_size = 16
+        font_size = 12
         platform = sys.platform
         if platform == 'linux':
             font_obj = ImageFont.truetype(
@@ -343,9 +341,9 @@ class class_Pai (object):
             draw_buttom_img = ImageDraw.ImageDraw(
                 buttom_img)
             draw_buttom_img.rectangle(
-                rect, fill=dark_color)
+                rect, fill='lightgray')
             draw_buttom_img.text(
-                text, btn_text, fill=white_color, font=font_obj, anchor='CENTER')
+                text, btn_text, fill='black', font=font_obj, anchor='CENTER')
 
             return ImageTk.PhotoImage(buttom_img)
 
@@ -367,10 +365,10 @@ class class_Pai (object):
         btn_text = '暗槓'
         self.buttom_img_AnKan = create_btn_img(btn_text, font_size)
 
-        btn_text = 'ツモ'
+        btn_text = '自模'
         self.buttom_img_Tsumo = create_btn_img(btn_text, font_size)
 
-        btn_text = 'ロン'
+        btn_text = '栄和'
         self.buttom_img_Ron = create_btn_img(btn_text, font_size)
 
         return
@@ -636,7 +634,7 @@ class class_Pai (object):
             x = 20 + 35 * i
             if i == last_index:
                 x += 10
-            y = 30
+            y = 45
             tag_name = f'tehai_{i}'
             self.t_canvas.create_image(
                 x, y, image=img, anchor=tk.NW, tag=tag_name)
@@ -679,11 +677,11 @@ class class_Pai (object):
                     offset += 32
                     if i == end and not isNoRotate:
                         offset += 10
-                        y = 40
+                        y = 55
                         x = x_offset - offset
                         img = self.PAI_ROTATE_IMG[pai_id]
                     else:
-                        y = 30
+                        y = 45
                         x = x_offset - offset
                         img = self.PAI_IMG[pai_id]
                     if (i == 0 or i == 3) and isNoRotate:
@@ -736,9 +734,10 @@ class class_Pai (object):
     def pon(self):
         pop_index, select = self._set_pop_index_select()
         temp_id = None
-        if select[-1] > 100:
-            temp_id = select[-1]-100
-            select[-1] = temp_id
+        if len(select) > 0:
+            if select[-1] > 100:
+                temp_id = select[-1]-100
+                select[-1] = temp_id
 
         if len(select) == 3 and len(set(select)) == 1:
             for i, p_index in enumerate(pop_index):
@@ -754,9 +753,10 @@ class class_Pai (object):
     def minkan(self):
         pop_index, select = self._set_pop_index_select(kan=True)
         temp_id = None
-        if select[-1] > 100:
-            temp_id = select[-1]-100
-            select[-1] = temp_id
+        if len(select) > 0:
+            if select[-1] > 100:
+                temp_id = select[-1]-100
+                select[-1] = temp_id
 
         if len(select) == 4 and len(set(select)) == 1:
             for i, p_index in enumerate(pop_index):
@@ -771,9 +771,10 @@ class class_Pai (object):
     def ankan(self):
         pop_index, select = self._set_pop_index_select(kan=True)
         temp_id = None
-        if select[-1] > 100:
-            temp_id = select[-1]-100
-            select[-1] = temp_id
+        if len(select) > 0:
+            if select[-1] > 100:
+                temp_id = select[-1]-100
+                select[-1] = temp_id
 
         if len(select) == 4 and len(set(select)) == 1:
             for i, p_index in enumerate(pop_index):
@@ -786,6 +787,15 @@ class class_Pai (object):
             self.write_furo()
 
     def tsumo(self):
+        print(self.haipai, self.furo)
+        import class_Yaku as Y
+        y = Y.class_Yaku()
+        yaku_dict = y.judgement(self.haipai[:-1], self.furo, [self.haipai[-1]], [], [16, ], isReach=False,
+                                isTsumo=False, Ba='東', Tya='東')
+        print(yaku_dict)
+        yaku_dict = y.judgement(self.haipai[:-1], self.furo, [], [], [16, ], isReach=False,
+                                isTsumo=False, Ba='東', Tya='東')
+        print(yaku_dict)
         return
 
     def ron(self):
