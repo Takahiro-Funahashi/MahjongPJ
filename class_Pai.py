@@ -1,7 +1,8 @@
+import sys
 import random
 
-import tkinter as tk
-
+if sys.platform != 'ios':
+	import tkinter as tk
 
 class class_Pai (object):
     # ---[0:初期値
